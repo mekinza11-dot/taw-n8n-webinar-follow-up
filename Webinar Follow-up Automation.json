@@ -1,0 +1,649 @@
+{
+  "name": "Webinar Follow-up Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        576,
+        656
+      ],
+      "id": "82dd2f62-49f0-4bfd-827f-840aa9309790",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "FC0KJlLoLRltUHF0",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        96
+      ],
+      "id": "aaa06786-c8cf-4b51-9de4-281a5169f1fe",
+      "name": "Start Workflow"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1fjUYU0rWng7rTyv0Z0RAherinT2Mz_zn2XWDVpVO5tw",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Sheet1",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -32
+      ],
+      "id": "af25c71f-d9eb-42d2-84ab-46777aa3a84c",
+      "name": "Get Webinar Registrations",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4iwDUHJqHKumSF1G",
+          "name": "Google Sheets account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = [\n  { name: 'Ali', email: ' ali@example.com', attendance: 'attended', follow_up_status: 'pending', crm_tag: '' },\n  { name: 'Sara', email: 'sara@example.com', attendance: 'no_show', follow_up_status: 'pending', crm_tag: '' },\n  { name: 'Ahmed', email: 'ahmed@example.com', attendance: 'attended', follow_up_status: 'pending', crm_tag: '' },\n  { name: 'Ayesha', email: 'ayesha@example.com', attendance: 'no_show', follow_up_status: 'pending', crm_tag: '' },\n  { name: 'Hamza', email: 'hamza@example.com', attendance: 'attended', follow_up_status: 'pending', crm_tag: '' },\n];\n\nreturn rows.map(row => ({ json: row }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        48,
+        160
+      ],
+      "id": "793665dc-779e-4eb8-b5be-4499ce6e852f",
+      "name": "Sample Registration Data"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "3612e1f5-b75a-46b0-8b78-21ac4f0bc90b",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        304,
+        160
+      ],
+      "id": "e527d5e2-6752-40ca-864a-75c0e991acef",
+      "name": "Validate Email"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 4
+          },
+          "conditions": [
+            {
+              "id": "73da305c-d62d-4a13-89d2-d24dd4b76758",
+              "leftValue": "={{ $json.attendance }}",
+              "rightValue": "attended",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.4,
+      "position": [
+        512,
+        144
+      ],
+      "id": "0e57db70-b3a3-4aa4-b7fd-3f362deb8aca",
+      "name": "Check Attendance"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=\n\nWrite a friendly and professional webinar follow-up email for a person who attended the webinar.\n\nName: {{ $json.name }}\n\nInclude:\n- A personalized greeting.\n- Thank them for attending.\n- A friendly closing.\nMention the webinar replay only if it has actually been made available. Do not claim it is available if its availability has not been confirmed.\nKeep the email concise and do not invent a replay link.\n\nReturn only the email body.\nDo not include a subject line.\nDo not include placeholders for the sender's name, position, or company.\n\n\n\n\n\nDo not use placeholders such as [topic]. If webinar details are unknown, simply omit them.\n\n\nUse a consistent, warm, professional tone. Keep the email between 60 and 100 words. Avoid unnecessary repetition and overly enthusiastic language.\n\n\n\nDo not invent the webinar date or say \"yesterday\" unless the date is provided.\nDo not promise future recordings, resources, or follow-up materials unless confirmed.\nOnly include facts supported by the input.\n\n\n\nDo not claim the webinar provided specific benefits, takeaways, or outcomes unless those details are included in the input. Do not promise future opportunities, resources, or follow-ups. Only thank the attendee and invite them to ask questions or share feedback.\n\n\nUse simple, natural language. Avoid claims about what the attendee learned, enjoyed, or gained. Do not repeat the same idea. Keep the email concise and include only a thank-you and an invitation to ask questions or share feedback.\n\n\n\nFollow this exact structure:\nHi [name],\n\nThank you for attending our webinar. We appreciate you taking the time to join us. If you have any questions or feedback, please feel free to reply to this email.\n\nYou can watch the webinar recording here: https://example.com/webinar-replay\nBest regards,\n\nDo not add claims, benefits, promises, or extra information. Replace [name] with the actual name.\n\nDo not include numbered points, numbering, extra sentences, or additional text. Never leave email_message empty. Generate one complete email for every input recipient.\nIMPORTANT: Output ONLY the exact email structure provided above. Do not add, remove, rewrite, or expand any sentence. The only allowed replacement is [name] with the recipient's actual name.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        720,
+        128
+      ],
+      "id": "bafc12f8-a39a-4785-9fce-4338bd1e6c5a",
+      "name": "Generate Attendee Email",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Write a friendly and professional follow-up email for someone who registered for a webinar but did not attend.\n\nName: {{ $json.name }}\n\nInclude:\n- A personalized greeting.\n- Politely mention that we missed them.\nMention the webinar replay only if it has actually been made available. Do not claim it is available if its availability has not been confirmed.\n\n\n\nIf the replay is available, encourage them to watch it.\n- A friendly closing.\n\nReturn only the email body. Do not include a subject line or placeholders.\nDo not invent a replay link.\n\n\n\nDo not include [Your Name] or any other sender placeholders.\nEnd the email with: Best regards,\n\n\n\nDo not invent future webinars, events, dates, or promises. Only mention information provided in the input.\n\n\n\nUse a consistent, warm, professional tone. Keep the email between 60 and 100 words. Avoid unnecessary repetition and overly enthusiastic language.\n\n\nDo not invent the webinar date or say \"yesterday\" unless the date is provided.\nDo not promise future recordings, resources, or follow-up materials unless confirmed.\nOnly include facts supported by the input.\n\n\n\nIf replay or recording availability is not explicitly provided in the input, do not mention a recording, replay, or promise to share one. Instead, focus on politely acknowledging their absence and inviting questions or feedback.\n\n\n\nDo not promise to provide summaries, notes, resources, or other materials unless their availability is explicitly confirmed in the input. Do not promise future webinars or opportunities. Only invite the recipient to ask questions or share feedback.\n\n\nUse simple, natural language. Avoid repeating ideas or phrases. Do not assume what the recipient missed or learned. Keep the email concise and include only an acknowledgment of their absence, an invitation to ask questions or share feedback, and a polite closing.\n\n\nFollow this exact structure:\nHi [name],\n\nThank you for registering for our webinar. We noticed you were unable to attend. If you have any questions or feedback, please feel free to reply to this email.\nYou can watch the webinar recording here: https://example.com/webinar-replay\n4.\nBest regards,\n\nDo not offer recordings, summaries, key takeaways, resources, or other materials. Do not add claims or promises. Replace [name] with the actual name.\n",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        736,
+        480
+      ],
+      "id": "d5cd7a54-830d-4499-be18-db8511c3102b",
+      "name": "Generate No-Show Email",
+      "retryOnFail": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4f1f7cc5-c695-4596-8bda-e4ddd3daa88c",
+              "name": "email_subject",
+              "value": "Thank You for Attending Our Webinar!",
+              "type": "string"
+            },
+            {
+              "id": "cbb8ef9c-a527-49c0-8f50-3b6bd437e1b8",
+              "name": "email_message",
+              "value": "={{\n'Hi ' + $('Check Attendance').all()[$itemIndex].json.name + ',\\n\\n' +\n'Thank you for attending our webinar. We appreciate you taking the time to join us. If you have any questions or feedback, please feel free to reply to this email.\\n\\n' +\n'You can watch the webinar recording here: https://example.com/webinar-replay\\n\\n' +\n'Best regards,'\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1136,
+        112
+      ],
+      "id": "c59e27e3-2d6d-470b-a052-b870e8a98ceb",
+      "name": "Format Attendee Email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32a067e1-9c22-44cd-8ffc-fdd84d1ad723",
+              "name": "email_subject",
+              "value": "We Missed You at Our Webinar!",
+              "type": "string"
+            },
+            {
+              "id": "cf8d9944-3ed9-43c2-a03d-8803e07373e5",
+              "name": "email_message",
+              "value": "={{\n'Hi ' + $('Check Attendance').all()[$itemIndex].json.name + ',\\n\\n' +\n'Thank you for registering for our webinar. We noticed you were unable to attend. If you have any questions or feedback, please feel free to reply to this email.\\n\\n' +\n'You can watch the webinar recording here: https://example.com/webinar-replay\\n\\n' +\n'Best regards,'\n}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1104,
+        464
+      ],
+      "id": "28455084-963d-4f5c-8448-88136d31c77d",
+      "name": "Format No-Show Email"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c79e5014-d19a-4f0a-ad82-931588c6bcea",
+              "name": "crm_tag",
+              "value": "webinar_attended",
+              "type": "string"
+            },
+            {
+              "id": "5fb62252-b291-4da4-a9fe-c0ab4c47d0d6",
+              "name": "follow_up_status",
+              "value": "ready_to_send",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1312,
+        112
+      ],
+      "id": "3addb8f2-a655-4a85-b745-43a60df20d5d",
+      "name": "Tag Attendee"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9e0afcd3-3cb1-4809-8746-baa9c406f2bb",
+              "name": "crm_tag",
+              "value": "webinar_no_show",
+              "type": "string"
+            },
+            {
+              "id": "e2edbfb7-c9f5-46c4-93ee-f5b304336857",
+              "name": "follow_up_status",
+              "value": "ready_to_send",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1280,
+        464
+      ],
+      "id": "27809e5e-86f2-43ed-b979-589f3970c306",
+      "name": "Tag No-Show"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    name: item.json.name || 'Unknown',\n    email: item.json.email || 'Missing email',\n    error: 'Email address is missing',\n    status: 'Skipped'\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        272
+      ],
+      "id": "3344b4bb-c5de-430d-bcaf-8e00019b0910",
+      "name": "Handle Missing Email"
+    },
+    {
+      "parameters": {
+        "sendTo": "mekinza11@gmail.com",
+        "subject": "={{ $('Format Attendee Email').item.json.email_subject }}",
+        "message": "={{ $('Format Attendee Email').item.json.email_message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1504,
+        112
+      ],
+      "id": "bb200894-ab5c-4bc5-b210-e2c04eeaa2b8",
+      "name": "Send Attendee Email",
+      "webhookId": "e0b328ca-c152-4305-a468-3626494ade78",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ADtEdtqiom4dupGX",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "sendTo": "mekinza11@gmail.com",
+        "subject": "={{ $('Format No-Show Email').item.json.email_subject }}",
+        "message": "={{ $('Format No-Show Email').item.json.email_message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1472,
+        464
+      ],
+      "id": "86093106-cadd-4eb5-aaf2-fcf489d88edf",
+      "name": "Send No-Show Email",
+      "webhookId": "6a4757aa-7e8e-4b0c-8d3d-3dac3faaad5c",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "ADtEdtqiom4dupGX",
+          "name": "Gmail account"
+        }
+      },
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    error_type: 'AI Email Generation Failed',\n    branch: 'Attendee',\n    error_message: item.json.error?.message || item.json.message || 'Unknown AI error',\n    status: 'Failed'\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        288
+      ],
+      "id": "9206397c-9186-475a-a765-8bc8ea6a63f1",
+      "name": "Handle Attendee AI Error."
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(item => ({\n  json: {\n    error_type: 'AI Email Generation Failed',\n    branch: 'No-Show',\n    error_message: item.json.error?.message || item.json.message || 'Unknown AI error',\n    status: 'Failed'\n  }\n}));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        624
+      ],
+      "id": "971ad693-9657-4e2e-a69d-33d197a2f9a3",
+      "name": "Handle No-Show AI Error"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webinar-registration",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        352
+      ],
+      "id": "3b17f4a4-94ea-47d6-8621-20ba48e91cf3",
+      "name": "Webhook",
+      "webhookId": "27d53d32-a07d-442b-8caa-e23d689b5b5f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2145a5e9-0551-4c75-b688-031fcba8b0d0",
+              "name": "email",
+              "value": "={{ $json.body.email }}",
+              "type": "string"
+            },
+            {
+              "id": "7c0f6f16-adc4-4bbb-8374-ccb47b02b15f",
+              "name": "attendance",
+              "value": "={{ $json.body.attendance }}",
+              "type": "string"
+            },
+            {
+              "id": "1564e49f-7b84-4c05-8c61-2176f6ef5e99",
+              "name": "follow_up_status",
+              "value": "={{ $json.body.follow_up_status }}",
+              "type": "string"
+            },
+            {
+              "id": "59f992ee-15d9-4427-80c8-5c3de17ba0d9",
+              "name": "crm_tag",
+              "value": "={{ $json.body.crm_tag }}",
+              "type": "string"
+            },
+            {
+              "id": "e963ab75-d9bd-4aa2-b681-6decf4ced268",
+              "name": "name",
+              "value": "={{ $json.body.name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        112,
+        352
+      ],
+      "id": "0bd9f3de-df5e-45c4-9b31-ae1d0f2f9797",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Attendee Email",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Generate No-Show Email",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start Workflow": {
+      "main": [
+        [
+          {
+            "node": "Get Webinar Registrations",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Sample Registration Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample Registration Data": {
+      "main": [
+        [
+          {
+            "node": "Validate Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Email": {
+      "main": [
+        [
+          {
+            "node": "Check Attendance",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Missing Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Attendance": {
+      "main": [
+        [
+          {
+            "node": "Generate Attendee Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Generate No-Show Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Attendee Email": {
+      "main": [
+        [
+          {
+            "node": "Format Attendee Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle Attendee AI Error.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate No-Show Email": {
+      "main": [
+        [
+          {
+            "node": "Format No-Show Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Handle No-Show AI Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Attendee Email": {
+      "main": [
+        [
+          {
+            "node": "Tag Attendee",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format No-Show Email": {
+      "main": [
+        [
+          {
+            "node": "Tag No-Show",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Attendee": {
+      "main": [
+        [
+          {
+            "node": "Send Attendee Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag No-Show": {
+      "main": [
+        [
+          {
+            "node": "Send No-Show Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Validate Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "b4f2e333-d834-4fe7-8d92-0d8ea30ce55d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "88670c3b0117c4da5fc598490d7dde257658c1c55f5bca885b30139a912990d9"
+  },
+  "nodeGroups": [],
+  "id": "kZER2GlW5Zxq9Pw0",
+  "tags": []
+}
