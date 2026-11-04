@@ -120,7 +120,7 @@ The following tests were performed:
 
 ### Attendee Follow-up Execution
 
-![Attendee Execution](./attendee-execution.png)
+![Attendee Execution](https://github.com/mekinza11-dot/taw-n8n-webinar-follow-up/blob/main/attendee-execution.png.jpeg?raw=true)
 
 ### No-Show Follow-up Execution
 
