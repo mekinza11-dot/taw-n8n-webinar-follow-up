@@ -304,14 +304,14 @@
       "typeVersion": 2,
       "position": [
         480,
-        272
+        288
       ],
       "id": "3344b4bb-c5de-430d-bcaf-8e00019b0910",
       "name": "Handle Missing Email"
     },
     {
       "parameters": {
-        "sendTo": "mekinza11@gmail.com",
+        "sendTo": "recipient@example.com",
         "subject": "={{ $('Format Attendee Email').item.json.email_subject }}",
         "message": "={{ $('Format Attendee Email').item.json.email_message }}",
         "options": {}
@@ -336,7 +336,7 @@
     },
     {
       "parameters": {
-        "sendTo": "mekinza11@gmail.com",
+        "sendTo": "recipient@example.com",
         "subject": "={{ $('Format No-Show Email').item.json.email_subject }}",
         "message": "={{ $('Format No-Show Email').item.json.email_message }}",
         "options": {}
@@ -638,7 +638,7 @@
     "executionOrder": "v1",
     "binaryMode": "separate"
   },
-  "versionId": "b4f2e333-d834-4fe7-8d92-0d8ea30ce55d",
+  "versionId": "6691bd19-e45c-40dd-90cc-4f3191929779",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "88670c3b0117c4da5fc598490d7dde257658c1c55f5bca885b30139a912990d9"
