@@ -6,6 +6,10 @@ An AI-powered webinar follow-up automation workflow built using **n8n**. It help
 
 Following up with webinar participants manually can take time. This automation separates attendees from no-shows, generates appropriate follow-up emails, and prepares CRM tags for each participant.
 
+## Project Demo
+
+[Watch the 90-Second Demo on Loom](https://www.loom.com/share/eacfe687abce4afabfce6e895d2c4bc0)
+
 ## Target Audience
 
 Coaches, webinar hosts, and online educators who want to automate their webinar follow-up process.
@@ -128,27 +132,23 @@ Core attendee and no-show workflow paths have been tested using sample registrat
 
 `taw-n8n-webinar-follow-up`
 
-## Project Demo
-
-[Watch 90-Second Demo on Loom](https://www.loom.com/share/eacfe687abce4afabfce6e895d2c4bc0)
-
 
 
 ## Test Checklist
 
 - [x] Webhook receives registration data successfully.
-- [x] Email validation for valid email addresses.
+- [x] Email validation.
 - [x] Attendee follow-up email generation.
 - [x] No-show follow-up email generation.
 - [x] Attendee CRM tagging.
 - [x] No-show CRM tagging.
 - [x] Missing email handling.
-- [x] AI retry configuration (3 attempts).
+- [x] AI retry configuration.
 - [x] AI error-handling branches configured.
 - [ ] Actual Gmail email delivery.
 - [ ] Live Zoom integration.
 - [ ] Google Sheets integration.
-
+- [ ] Actual AI API failure execution.
 
 ## Error Handling
 
