@@ -128,3 +128,6 @@ Core attendee and no-show workflow paths have been tested using sample registrat
 
 `taw-n8n-webinar-follow-up`
 
+## Project Demo
+
+[Watch 90-Second Demo on Loom](https://www.loom.com/share/eacfe687abce4afabfce6e895d2c4bc0)
