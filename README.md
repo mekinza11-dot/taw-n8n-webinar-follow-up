@@ -131,3 +131,20 @@ Core attendee and no-show workflow paths have been tested using sample registrat
 ## Project Demo
 
 [Watch 90-Second Demo on Loom](https://www.loom.com/share/eacfe687abce4afabfce6e895d2c4bc0)
+
+
+
+## Test Checklist
+
+- [x] Webhook receives registration data successfully.
+- [x] Email validation for valid email addresses.
+- [x] Attendee follow-up email generation.
+- [x] No-show follow-up email generation.
+- [x] Attendee CRM tagging.
+- [x] No-show CRM tagging.
+- [x] Missing email handling.
+- [x] AI retry configuration (3 attempts).
+- [x] AI error-handling branches configured.
+- [ ] Actual Gmail email delivery.
+- [ ] Live Zoom integration.
+- [ ] Google Sheets integration.
