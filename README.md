@@ -116,6 +116,16 @@ The following tests were performed:
 - CRM tagging for both participant types.
 - Missing email handling.
 
+## Workflow Screenshots
+
+### Attendee Follow-up Execution
+
+![Attendee Execution](attendee-execution.png)
+
+### No-Show Follow-up Execution
+
+![No-Show Execution](no-show-execution.png)
+
 ## Current Limitations
 
 - Google Sheets integration is not yet active.
