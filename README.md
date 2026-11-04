@@ -124,7 +124,7 @@ The following tests were performed:
 
 ### No-Show Follow-up Execution
 
-![No-Show Execution](./no-show-execution.png)
+![No-Show Execution](https://github.com/mekinza11-dot/taw-n8n-webinar-follow-up/blob/main/no-show-execution.png.jpeg?raw=true)
 
 ## Current Limitations
 
