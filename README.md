@@ -156,3 +156,8 @@ Core attendee and no-show workflow paths have been tested using sample registrat
 - AI email generation nodes are configured to retry failed requests up to 3 times.
 - If AI generation still fails, the error-handling branch records the error type, message, and failure status.
 - Failed email generation does not proceed as a successful follow-up.
+
+
+## Security Note
+
+API credentials are stored securely in n8n Credentials. No real API keys or passwords are included in this repository.
