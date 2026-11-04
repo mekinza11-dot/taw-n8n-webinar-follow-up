@@ -120,11 +120,11 @@ The following tests were performed:
 
 ### Attendee Follow-up Execution
 
-![Attendee Execution](attendee-execution.png)
+![Attendee Execution](./attendee-execution.png)
 
 ### No-Show Follow-up Execution
 
-![No-Show Execution](no-show-execution.png)
+![No-Show Execution](./no-show-execution.png)
 
 ## Current Limitations
 
